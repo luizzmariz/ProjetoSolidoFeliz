@@ -20,7 +20,9 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        Vector2 orientation = this.gameObject.GetComponent<PlayerMovement>().lastOrientation;
+        Vector2 secondLastOrientation = this.gameObject.GetComponent<PlayerMovement>().secondLastOrientation;
+        Vector2 lastOrientation = this.gameObject.GetComponent<PlayerMovement>().lastOrientation;
+        Vector2 orientation = this.gameObject.GetComponent<PlayerMovement>().orientation;
 
         if(cooldownTimer > 0)
         {
@@ -31,7 +33,7 @@ public class PlayerAttack : MonoBehaviour
             cooldownTimer = 0;
             if(Input.GetButton("Fire1"))
             {
-                Instantiate(attacks[0], new Vector3(playerTransform.position.x + orientation.x * meleeAttackRange, playerTransform.position.y + orientation.y * meleeAttackRange, 0), Quaternion.identity, playerTransform);
+                Instantiate(attacks[0], new Vector3(playerTransform.position.x + secondLastOrientation.x * meleeAttackRange, playerTransform.position.y + secondLastOrientation.y * meleeAttackRange, 0), Quaternion.identity);
                 cooldownTimer = attackDuration;
                 // Collider2D[] entitiesAttacked;
                 // attackCollider.OverlapCollider(ContactFilter2D.NoFilter, entitiesAttacked);

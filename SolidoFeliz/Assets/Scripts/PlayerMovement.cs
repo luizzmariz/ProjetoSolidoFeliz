@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float speed;
     public Vector2 orientation;
     public Vector2 lastOrientation;
+    public Vector2 secondLastOrientation;
 
     void Start()
     {
@@ -155,6 +156,8 @@ public class PlayerMovement : MonoBehaviour
         orientation = new Vector2(horizontal, vertical);
 
         //preciso otimizar essa checagem!
+
+        secondLastOrientation = lastOrientation;
 
         if(orientation != Vector2.zero && orientation != lastOrientation)
         {
