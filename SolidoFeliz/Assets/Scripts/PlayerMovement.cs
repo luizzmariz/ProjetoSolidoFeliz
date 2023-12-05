@@ -138,7 +138,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if(vertical > 0f)
         {
-            if(vertical > 0.5f)
+            if(vertical > 0.6f)
             {
                 moveState = MovementState.RUNNING;
             }
@@ -146,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if(vertical < 0f)
         {
-            if(vertical < -0.5f)
+            if(vertical < -0.6f)
             {
                 moveState = MovementState.RUNNING;
             }
