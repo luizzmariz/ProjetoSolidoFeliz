@@ -1,86 +1,194 @@
-// public class Pathfinding : MonoBehaviour {
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.Tilemaps;
+public class Pathfinding : MonoBehaviour {
 
-// 	public Transform seeker, target;
-//     public GameObject aStar;
-// 	Grid grid;
-//     List<GridNode> gridPath;
+	public Transform seeker, target;
+    Tilemap collisionTileMap;
+    Tilemap pathTileMap;
+    //public bool showPath;
+    //Action<T> callback;
+    List<GridNode> gridPath;
 
-// 	void Awake() {
-// 		grid = aStar.GetComponent<Grid> ();
-//         //grid = GetComponent<Grid> ();
-// 	}
+	void Start() {
+		collisionTileMap = GameObject.Find("Collisions").GetComponent<Tilemap>();
+        //pathTileMap = GameObject.Find("Paths").GetComponent<Tilemap>();
 
-// 	void Update() {
-// 		FindPath (seeker.position, target.position);
-// 	}
+        FindPath(seeker.position, target.position);
+	}
 
-//     public List<GridNode> GetPath() {
-// 		return gridPath;
-// 	}
+    // public List<GridNode> GetPath(Action<T> _callback) {
+    //     FindPath(seeker.position, target.position);
+    //     this.callback = _callback;
+	// }
 
-//     void FindPath(Vector3 startPos, Vector3 targetPos) {
-// 		GridNode startNode = grid.NodeFromWorldPoint(startPos);
-// 		GridNode targetNode = grid.NodeFromWorldPoint(targetPos);
+    void FindPath(Vector3 startPos, Vector3 targetPos) {
+		// Debug.Log("startPos - " + startPos);
+		// Debug.Log("targetPos - " + targetPos);
 
-// 		List<GridNode> openSet = new List<GridNode>();
-// 		HashSet<GridNode> closedSet = new HashSet<GridNode>();
-// 		openSet.Add(startNode);
+		GridNode startNode = GetGridNode(startPos);
+		GridNode targetNode = GetGridNode(targetPos);
 
-// 		while (openSet.Count > 0) {
-// 			GridNode node = openSet[0];
-// 			for (int i = 1; i < openSet.Count; i ++) {
-// 				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-// 					if (openSet[i].hCost < node.hCost)
-// 						node = openSet[i];
-// 				}
-// 			}
+		Debug.Log("Starting from: " + startNode.gridX + ", " + startNode.gridY);
+		Debug.Log("Objective: " + targetNode.gridX + ", " + targetNode.gridY);
 
-// 			openSet.Remove(node);
-// 			closedSet.Add(node);
+		List<GridNode> openSet = new List<GridNode>();
+		List<GridNode> closedSet = new List<GridNode>();
+		openSet.Add(startNode);
 
-// 			if (node == targetNode) {
-//                 RetracePath(startNode,targetNode);
-// 				return;
-// 			}
+		//int gg = 0;
 
-// 			foreach (GridNode neighbour in grid.GetNeighbours(node)) {
-// 				if (!neighbour.walkable || closedSet.Contains(neighbour)) {
-// 					continue;
-// 				}
+		while (openSet.Count > 0) {
+			//gg++;
+			GridNode node = openSet[0];
 
-// 				int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
-// 				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
-// 					neighbour.gCost = newCostToNeighbour;
-// 					neighbour.hCost = GetDistance(neighbour, targetNode);
-// 					neighbour.parent = node;
+			//Debug.Log(gg + "° - " + node.gridX + ", " + node.gridY);
 
-// 					if (!openSet.Contains(neighbour))
-// 						openSet.Add(neighbour);
-// 				}
-// 			}
-// 		}
-// 	}
+			for (int i = 1; i < openSet.Count; i ++) {
+				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
+					if (openSet[i].hCost < node.hCost)
+						node = openSet[i];
+				}
+			}
 
-// 	void RetracePath(GridNode startNode, GridNode endNode) {
-// 		List<GridNode> path = new List<GridNode>();
-// 		GridNode currentNode = endNode;
+			//Debug.Log("HMMM");
 
-// 		while (currentNode != startNode) {
-// 			path.Add(currentNode);
-// 			currentNode = currentNode.parent;
-// 		}
-// 		path.Reverse();
+			openSet.Remove(node);
+			closedSet.Add(node);
+			//Debug.Log(closedSet);
+			// int ifr = 0;
+			// foreach(GridNode gy in closedSet)
+			// {
+			// 	Debug.Log(gg + "° - " + closedSet[ifr].gridX + ", " + closedSet[ifr].gridY + " está no closed");
+			// 	ifr++;
+			// }
+			// ifr = 0;
+			
+			//só preciso alterar o check da linha de baixo
+			if (node.gridX == targetNode.gridX && node.gridY == targetNode.gridY) {
+				// Debug.Log("CRx,y = " + node.gridX + ", " + node.gridY);
+				// Debug.Log("CRPx,y = " + node.parent.gridX + ", " + node.parent.gridY);
+                RetracePath(startNode,node);
+				//Debug.Log("gg");
+				return;
+			}
+
+			foreach (GridNode neighbour in GetNeighbours(node)) {
+
+				if (!neighbour.walkable || closedSet.Contains(neighbour)) {
+					//Debug.Log(gg + "° - " + node.gridX + ", " + node.gridY + "foi col");
+					continue;
+				}
+
+				int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
+					neighbour.gCost = newCostToNeighbour;
+					neighbour.hCost = GetDistance(neighbour, targetNode);
+					neighbour.parent = node;
+
+					//Debug.Log(neighbour.gCost);
+					//Debug.Log(neighbour.hCost);
+
+					if (!openSet.Contains(neighbour)){
+						openSet.Add(neighbour);
+					}
+				}
+			}
+		}
+	}
+
+    GridNode GetGridNode(Vector3 worldPosition)
+    {
+        Grid grid = GameObject.Find("Grid").GetComponent<Grid>();
+        Vector3Int nodePosition = grid.WorldToCell(worldPosition);
+
+		GridNode node = new GridNode(!collisionTileMap.HasTile(nodePosition), grid.CellToWorld(nodePosition), nodePosition.x, nodePosition.y);
+
+		return node;
+    }
+
+    GridNode GetGridNode(Vector3Int nodePos)
+    {
+        Grid grid = GameObject.Find("Grid").GetComponent<Grid>();
+        Vector3 worldPosition = grid.CellToWorld(nodePos);
+
+		GridNode node = new GridNode(!collisionTileMap.HasTile(nodePos), worldPosition, nodePos.x, nodePos.y);
+		return node;
+    }
+
+	void RetracePath(GridNode startNode, GridNode endNode) {
+		List<GridNode> path = new List<GridNode>();
+		GridNode currentNode = endNode;
+
+		
+		int ki = 0;
+
+		//while (currentNode.gridX != startNode.gridX && currentNode.gridY != startNode.gridY) {
+		while (currentNode != startNode) {
+			path.Add(currentNode);
+			// Debug.Log("CRx,y = " + currentNode.gridX + ", " + currentNode.gridY);
+			// Debug.Log(ki);
+			// Debug.Log("CRPx,y = " + currentNode.parent.gridX + ", " + currentNode.parent.gridY);
+			currentNode = currentNode.parent;
+			ki++;
+		}
+		path.Reverse();
         
-// 		grid.path = path;
-//         gridPath = path;
-// 	}
+        // if(showPath)
+        // {
+        //     DrawPath(path);
+        // }
 
-// 	int GetDistance(GridNode nodeA, GridNode nodeB) {
-// 		int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
-// 		int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
+        //callback(path);
 
-// 		if (dstX > dstY)
-// 			return 14*dstY + 10* (dstX-dstY);
-// 		return 14*dstX + 10 * (dstY-dstX);
-// 	}
-// }
+        //gridPath = path;
+		
+
+		//SE QUISER VER O CAMINHO GERADO É SÓ DESCOMENTAR ESSE CÓDGIO ABAIXO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		// foreach(GridNode node in path)
+		// {
+		// 	Debug.Log("current node coordenates are x: " + node.gridX + ", y: " + node.gridY);
+		// }
+	}
+
+    // void DrawPath(List<GridNode> path)
+    // {
+    //     foreach(GridNode node in path)
+    //     {
+    //         pathTileMap.SetColor(new Vector3Int(node.gridX, node.gridY, 0), Color.red);
+    //     }
+        
+    // }
+
+	public List<GridNode> GetNeighbours(GridNode node) {
+		List<GridNode> neighbours = new List<GridNode>();
+
+		for (int x = -1; x <= 1; x++) {
+			for (int y = -1; y <= 1; y++) {
+				if (x == 0 && y == 0){
+					continue;
+				}
+
+				int checkX = node.gridX + x;
+				int checkY = node.gridY + y;
+
+				//if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
+				neighbours.Add(GetGridNode(new Vector3Int(checkX, checkY, 0)));
+				//}
+			}
+		}
+
+		return neighbours;
+	}
+
+	int GetDistance(GridNode nodeA, GridNode nodeB) {
+		int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
+		int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
+
+		if (dstX > dstY)
+			return 14*dstY + 10* (dstX-dstY);
+		return 14*dstX + 10 * (dstY-dstX);
+	}
+}
+
