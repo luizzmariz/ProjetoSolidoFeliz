@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,9 +14,10 @@ public class Pathfinding : MonoBehaviour {
 
 	void Start() {
 		collisionTileMap = GameObject.Find("Collisions").GetComponent<Tilemap>();
+		seeker = transform;
         //pathTileMap = GameObject.Find("Paths").GetComponent<Tilemap>();
 
-        FindPath(seeker.position, target.position);
+        //FindPath(seeker.position, target.position);
 	}
 
     // public List<GridNode> GetPath(Action<T> _callback) {
@@ -23,15 +25,17 @@ public class Pathfinding : MonoBehaviour {
     //     this.callback = _callback;
 	// }
 
-    void FindPath(Vector3 startPos, Vector3 targetPos) {
+    public void FindPath(/*Vector3 startPos, Vector3 targetPos,*/ Action<List<GridNode>> callBack) {
+		Vector3 startPos = seeker.position;
+		Vector3 targetPos = target.position;
 		// Debug.Log("startPos - " + startPos);
 		// Debug.Log("targetPos - " + targetPos);
 
 		GridNode startNode = GetGridNode(startPos);
 		GridNode targetNode = GetGridNode(targetPos);
 
-		Debug.Log("Starting from: " + startNode.gridX + ", " + startNode.gridY);
-		Debug.Log("Objective: " + targetNode.gridX + ", " + targetNode.gridY);
+		// Debug.Log("Starting from: " + startNode.gridX + ", " + startNode.gridY);
+		// Debug.Log("Objective: " + targetNode.gridX + ", " + targetNode.gridY);
 
 		List<GridNode> openSet = new List<GridNode>();
 		List<GridNode> closedSet = new List<GridNode>();
@@ -69,8 +73,9 @@ public class Pathfinding : MonoBehaviour {
 			if (node.gridX == targetNode.gridX && node.gridY == targetNode.gridY) {
 				// Debug.Log("CRx,y = " + node.gridX + ", " + node.gridY);
 				// Debug.Log("CRPx,y = " + node.parent.gridX + ", " + node.parent.gridY);
-                RetracePath(startNode,node);
-				//Debug.Log("gg");
+                
+				callBack(RetracePath(startNode,node));
+
 				return;
 			}
 
@@ -117,7 +122,7 @@ public class Pathfinding : MonoBehaviour {
 		return node;
     }
 
-	void RetracePath(GridNode startNode, GridNode endNode) {
+	List<GridNode> RetracePath(GridNode startNode, GridNode endNode) {
 		List<GridNode> path = new List<GridNode>();
 		GridNode currentNode = endNode;
 
@@ -134,17 +139,9 @@ public class Pathfinding : MonoBehaviour {
 			ki++;
 		}
 		path.Reverse();
+
+		return path;
         
-        // if(showPath)
-        // {
-        //     DrawPath(path);
-        // }
-
-        //callback(path);
-
-        //gridPath = path;
-		
-
 		//SE QUISER VER O CAMINHO GERADO É SÓ DESCOMENTAR ESSE CÓDGIO ABAIXO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 		// foreach(GridNode node in path)
 		// {
