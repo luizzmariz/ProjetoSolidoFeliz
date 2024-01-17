@@ -15,13 +15,19 @@ public class PlayerMovement : MonoBehaviour
     [Range(1.5f,3f)] 
     public float runningMultiplier;
     public float speed;
+    [HideInInspector]
     public Vector2 orientation;
+    [HideInInspector]
     public Vector2 lastOrientation;
+    [HideInInspector]
     public Vector2 secondLastOrientation;
+    public Vector3Int tilePosition;
+    Grid grid;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        grid = GameObject.Find("Grid").GetComponent<Grid>();
         moveState = MovementState.WALKING;
     }
 
@@ -29,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     {
         GetInput();
         Move();
+        
+        tilePosition = grid.WorldToCell(transform.position);
     }
 
     void GetInput()

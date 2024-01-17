@@ -45,10 +45,16 @@ public class ChaseState : BaseState
         if(path.Count > 0)
         {
             //((TestStateMachine)stateMachine).transform.position = Vector3.MoveTowards(((TestStateMachine)stateMachine).transform.position, path[0].worldPosition, ((TestStateMachine)stateMachine).movementSpeed * Time.deltaTime);
+
             Vector3 directionVector3 = (path[0].worldPosition - ((TestStateMachine)stateMachine).transform.position).normalized;
             Vector2 directionVector2 = new Vector2(directionVector3.x, directionVector3.y);
-            Debug.Log(directionVector2);
+            //Debug.Log(directionVector2);
             ((TestStateMachine)stateMachine).rigidBody2D.velocity = directionVector2 * ((TestStateMachine)stateMachine).movementSpeed;
+            //Debug.Log(((TestStateMachine)stateMachine).rigidBody2D.velocity);
+        }
+        else
+        {
+            Debug.Log("Hm");
         }
     }
 }

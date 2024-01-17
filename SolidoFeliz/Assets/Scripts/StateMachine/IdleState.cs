@@ -29,6 +29,7 @@ public class IdleState : BaseState
     public override void UpdatePhysics() {
         base.UpdatePhysics();
 
+        //tirar as // dps
         ((TestStateMachine)stateMachine).GetComponent<Rigidbody2D>().velocity = Vector3.zero;
     }
 }

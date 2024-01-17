@@ -47,8 +47,6 @@ public class TestStateMachine : StateMachine
 
         idleState = new IdleState(this);
         chaseState = new ChaseState(this);
-        // stunState = new Stun(this);
-        // fallenState = new Fallen(this);
     }
 
     public void GetInfo()
@@ -61,57 +59,22 @@ public class TestStateMachine : StateMachine
     }
 
     protected override BaseState GetInitialState() {
-        // targets.AddRange(GameObject.FindGameObjectsWithTag("Ally"));
-        // tf = GetComponent<Transform>();
-        // chasingState.FindCurrentTarget();
         return idleState;
     }
 
     // void OnCollisionEnter2D(Collision2D collisionInfo) {
-    //     if (collisionInfo.gameObject.tag == "Ally") {
-    //         if(collisionInfo.gameObject.GetComponent<NPCAllySM>() != null) {
-    //             life -= collisionInfo.gameObject.GetComponent<NPCAllySM>().damage;
-    //         } else if(collisionInfo.gameObject.GetComponent<AllyBT>() != null) {
-    //             life -= collisionInfo.gameObject.GetComponent<AllyBT>().damage;
-    //         }
-    //         rigidBody.velocity = new Vector3(0,0,0);
-    //         ChangeState(stunState);
-    //     }
-    //     if (collisionInfo.gameObject.tag == "AllyBaseWall") {
-    //         ChangeState(stunState);
-    //         rigidBody.velocity = speed*(tf.position -collisionInfo.gameObject.transform.position).normalized/2;
-    //     }
+    //     
     // }
 
     // void OnTriggerEnter2D(Collider2D collisionInfo) {
-    //     if (collisionInfo.gameObject.tag == "Ally" && currentState != fallenState) {
-    //         if(collisionInfo.gameObject.GetComponent<NPCAllySM>() != null) {
-    //             life -= collisionInfo.gameObject.GetComponent<NPCAllySM>().damage;
-    //         } else if(collisionInfo.gameObject.GetComponent<AllyBT>() != null) {
-    //             life -= collisionInfo.gameObject.GetComponent<AllyBT>().damage;
-    //         }
-    //         rigidBody.velocity = 2*speed*(tf.position -collisionInfo.gameObject.transform.position).normalized;
-    //         ChangeState(stunState);
-    //     }
+    //     
     // }
 
-    // public void LeaveStun() {
-    //     if (currentState != fallenState) {
-    //         idleState.UpdateLogic();
-    //     }
+    // private void OnGUI()
+    // {
+    //     GUILayout.BeginArea(new Rect(10f, 10f, 200f, 100f));
+    //     string content = currentState != null ? currentState.name : "(no current state)";
+    //     GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
+    //     GUILayout.EndArea();
     // }
-    /*
-    private void Update() {
-        targets.clear();
-        targets = new List<GameObject>();
-        targets.AddRange(GameObject.FindGameObjectsWithTag("Ally"));
-    }*/
-
-    private void OnGUI()
-    {
-        GUILayout.BeginArea(new Rect(10f, 10f, 200f, 100f));
-        string content = currentState != null ? currentState.name : "(no current state)";
-        GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
-        GUILayout.EndArea();
-    }
 }

@@ -18,7 +18,7 @@ public class Attack : MonoBehaviour
         ContactFilter2D cf2D = new ContactFilter2D();
         if(GetComponent<Collider2D>().OverlapCollider(cf2D, collisors) > 0)
         {
-            Debug.Log("Hit something");
+            //Debug.Log("Hit something");
         }
     }
 }
